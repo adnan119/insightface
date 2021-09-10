@@ -23,7 +23,7 @@ def main(args):
     try:
         world_size = int(os.environ['WORLD_SIZE'])
         rank = int(os.environ['RANK'])
-        dist.init_process_group('nccl')
+        dist.init_process_group(backend='nccl')
     except KeyError:
         world_size = 1
         rank = 0
@@ -47,7 +47,7 @@ def main(args):
 
     if cfg.resume:
         try:
-            backbone_pth = os.path.join(cfg.output, "backbone.pth")
+            backbone_pth = cfg.resume_model
             backbone.load_state_dict(torch.load(backbone_pth, map_location=torch.device(local_rank)))
             if rank == 0:
                 logging.info("backbone resume successfully!")
@@ -63,7 +63,7 @@ def main(args):
         rank=rank, local_rank=local_rank, world_size=world_size, resume=cfg.resume,
         batch_size=cfg.batch_size, margin_softmax=margin_softmax, num_classes=cfg.num_classes,
         sample_rate=cfg.sample_rate, embedding_size=cfg.embedding_size, prefix=cfg.output)
-    
+
     opt_backbone = torch.optim.Adam(
         params=[{'params': backbone.parameters()}],
         lr=cfg.lr / 512 * cfg.batch_size * world_size,
@@ -72,7 +72,6 @@ def main(args):
         params=[{'params': module_partial_fc.parameters()}],
         lr=cfg.lr / 512 * cfg.batch_size * world_size,
         weight_decay=cfg.weight_decay)
-
 
     num_image = len(train_set)
     total_batch_size = cfg.batch_size * world_size
@@ -98,7 +97,7 @@ def main(args):
     val_target = cfg.val_targets
     callback_verification = CallBackVerification(2000, rank, val_target, cfg.rec)
     callback_logging = CallBackLogging(50, rank, cfg.total_step, cfg.batch_size, world_size, None)
-    callback_checkpoint = CallBackModelCheckpoint(rank, cfg.output)
+    callback_checkpoint = CallBackModelCheckpoint(rank, cfg.output, cfg.model_name)
 
     loss = AverageMeter()
     start_epoch = 0
