@@ -45,6 +45,10 @@ The master branch works with **PyTorch 1.6+** and/or **MXNet=1.6-1.8**, with **P
 
 InsightFace efficiently implements a rich variety of state of the art algorithms of face recognition, face detection and face alignment, which optimized for both training and deployment.
 
+## Quick Start
+
+Please start with our [python-package](python-package/), for testing detection, recognition and alignment models on input images.
+
 
 ### ArcFace Video Demo
 
@@ -86,7 +90,7 @@ Commonly used network backbones are included in most of the methods, such as IRe
 
 ### Datasets
 
-The training data includes, but not limited to the cleaned MS1M, VGG2 and CASIA-Webface datasets, which were already packed in MXNet binary format. Please [dataset](recognition/_dataset_) page for detail.
+The training data includes, but not limited to the cleaned MS1M, VGG2 and CASIA-Webface datasets, which were already packed in MXNet binary format. Please [dataset](recognition/_datasets_) page for detail.
 
 ### Evaluation
 
