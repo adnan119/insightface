@@ -48,7 +48,8 @@ def main(args):
     if cfg.resume:
         try:
             backbone_pth = cfg.resume_model
-            backbone.load_state_dict(torch.load(backbone_pth, map_location=torch.device(local_rank)))
+            checkpoint = torch.load(backbone_pth, map_location=torch.device(local_rank))
+            backbone.load_state_dict(checkpoint['model_state_dict'])
             if rank == 0:
                 logging.info("backbone resume successfully!")
         except (FileNotFoundError, KeyError, IndexError, RuntimeError):
